@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TKA Bahasa Indonesia — Pemahaman Bacaan</title>
+<style>
+  :root{
+    --ink:#1a2233; --ink-soft:#4b5468; --paper:#ffffff; --panel:#f6f8fb;
+    --line:#e2e7ef; --accent:#7a3b2e; --accent-dark:#5c2c22;
+    --good:#227a4f; --good-bg:#eaf7f0; --bad:#b23a2e; --bad-bg:#fceeec;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:Georgia,'Source Serif 4','Times New Roman',serif;font-weight:600;margin:0;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px 100px;}
+  header.top{border-bottom:1px solid var(--line);padding:32px 0 22px;margin-bottom:28px;}
+  header.top .eyebrow{color:var(--accent);font-size:13.5px;letter-spacing:.01em;margin-bottom:6px;}
+  header.top h1{font-size:25px;letter-spacing:-.01em;}
+  header.top p{color:var(--ink-soft);font-size:14px;margin-top:8px;}
+  .catatan{background:#fff8e8;border:1px solid #f0dca8;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#7a5c14;margin-top:12px;}
+
+  .progress-bar{position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);z-index:20;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:8px;}
+  .progress-inner{max-width:760px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:14px;}
+  .progress-track{flex:1;height:6px;background:var(--line);border-radius:4px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--accent);width:0%;transition:width .25s ease;}
+  .progress-label{font-size:13px;color:var(--ink-soft);white-space:nowrap;min-width:64px;text-align:right;}
+
+  section.bagian{margin:36px 0 8px;}
+  section.bagian h2{font-size:17px;color:var(--accent-dark);padding-bottom:8px;border-bottom:2px solid var(--accent);margin-bottom:6px;}
+  section.bagian .sumber{font-size:12px;color:var(--ink-soft);margin-bottom:14px;font-style:italic;}
+  .bacaan{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:16px 18px;margin-bottom:18px;font-size:14.5px;white-space:pre-line;}
+  .bacaan h3{font-size:15.5px;margin-bottom:10px;}
+  .bacaan .glos{font-size:12.5px;color:var(--ink-soft);margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);}
+
+  .soal{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin-bottom:16px;}
+  .soal .no{font-size:13px;color:var(--ink-soft);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .tipe-pill{font-size:11px;padding:1px 8px;border-radius:20px;background:#f1e6e2;color:var(--accent-dark);font-weight:600;}
+  .soal .teks{font-size:15.5px;margin-bottom:12px;white-space:pre-line;}
+  .petunjuk-kompleks{font-size:13px;color:var(--ink-soft);font-style:italic;margin:-4px 0 12px;}
+
+  .opsi{display:flex;flex-direction:column;gap:8px;}
+  .opsi label{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);cursor:pointer;font-size:14.5px;transition:border-color .15s ease, background .15s ease;}
+  .opsi label:hover{border-color:var(--accent);}
+  .opsi input{margin-top:3px;accent-color:var(--accent);flex-shrink:0;}
+  .opsi label.dipilih{border-color:var(--accent);background:#f7efec;}
+
+  table.kategori-tabel{border-collapse:collapse;width:100%;font-size:14px;margin-top:6px;}
+  table.kategori-tabel th, table.kategori-tabel td{border:1px solid var(--line);padding:8px;text-align:left;}
+  table.kategori-tabel th{background:#f1ece9;}
+  table.kategori-tabel td.pilih{text-align:center;width:60px;}
+  table.kategori-tabel input{accent-color:var(--accent);}
+
+  .skor-card{background:var(--accent);color:#fff;border-radius:12px;padding:26px;margin:28px 0 30px;text-align:center;}
+  .skor-card .angka{font-family:Georgia,serif;font-size:48px;line-height:1;margin-bottom:6px;}
+  .skor-card .sub{font-size:14px;opacity:.9;}
+
+  .pembahasan .soal{border-left:4px solid var(--line);}
+  .pembahasan .soal.benar{border-left-color:var(--good);}
+  .pembahasan .soal.salah{border-left-color:var(--bad);}
+  .status-pill{display:inline-block;font-size:12px;padding:2px 10px;border-radius:20px;margin-left:auto;}
+  .status-pill.benar{background:var(--good-bg);color:var(--good);}
+  .status-pill.salah{background:var(--bad-bg);color:var(--bad);}
+  .jawaban-line{font-size:14px;margin:4px 0;}
+  .jawaban-line .label{color:var(--ink-soft);}
+  .jawaban-line.benar-teks{color:var(--good);font-weight:600;}
+  .jawaban-line.salah-teks{color:var(--bad);font-weight:600;}
+  .pembahasan-teks{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:14px;color:var(--ink-soft);white-space:pre-line;}
+  .pembahasan-teks b{color:var(--ink);}
+
+  .bar-bawah{position:fixed;left:0;right:0;bottom:0;background:var(--paper);border-top:1px solid var(--line);padding:14px 20px;display:flex;justify-content:center;z-index:30;box-shadow:0 -4px 16px rgba(20,30,50,.06);}
+  .btn{background:var(--accent);color:#fff;border:none;padding:13px 34px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s ease, opacity .15s ease;}
+  .btn:hover{background:var(--accent-dark);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn.secondary{background:transparent;color:var(--accent);border:1.5px solid var(--accent);}
+  .btn.secondary:hover{background:#f7efec;}
+  .peringatan{text-align:center;font-size:13px;color:var(--bad);margin-top:8px;}
+  #hasil-view{display:none;}
+  @media (max-width:480px){
+    header.top h1{font-size:21px;}
+    .soal{padding:14px;}
+    .bacaan{padding:12px 14px;font-size:14px;}
+    .skor-card .angka{font-size:38px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar">
+  <div class="progress-inner">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-label" id="progress-label">0 / 24</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Latihan TKA · Bahasa Indonesia</div>
+    <h1>Pemahaman Bacaan — 24 Soal</h1>
+    <p>8 teks bacaan (teks argumentasi, berita, cerpen, dan esai budaya) dengan soal Pemahaman Tekstual, Pemahaman Inferensial, dan Evaluasi &amp; Apresiasi. Baca teksnya dulu, lalu jawab semua soal di bawahnya.</p>
+    <div class="catatan">Catatan: sumber soal tidak menampilkan kunci jawaban di layar, jadi jawaban &amp; pembahasan disusun dari analisis bacaan sendiri. Soal indikator (4) dan (25) pada teks Buwuhan ternyata identik di sumber aslinya, sehingga hanya ditampilkan satu kali di sini.</div>
+  </header>
+
+  <div id="quiz-view"></div>
+
+  <div id="hasil-view">
+    <div class="skor-card">
+      <div class="angka" id="skor-angka">0 / 24</div>
+      <div class="sub" id="skor-sub">Nilai kamu</div>
+    </div>
+    <div class="pembahasan" id="pembahasan-list"></div>
+  </div>
+</div>
+
+<div class="bar-bawah" id="bar-bawah">
+  <div style="text-align:center;">
+    <button class="btn" id="btn-submit" disabled>Kirim Jawaban</button>
+    <div class="peringatan" id="peringatan" style="display:none;">Masih ada soal yang belum dijawab</div>
+  </div>
+</div>
+
+<script>
+const BACAAN = {
+buwuhan: {judul:"Tradisi Buwuhan: Antara Gotong Royong dan Utang Piutang", sumber:"Rachmawati, S. A., & Anwar, M. K. (2021). Jurnal Ekonomika dan Bisnis Islam, 4(3), hl 69–83.",
+teks:"Tradisi buwuhan merupakan bagian dari budaya masyarakat Jawa, khususnya di kota-kota besar seperti Surabaya. Tradisi ini dilakukan ketika ada acara penting seperti pernikahan atau khitanan yang diadakan di daerah tersebut. Buwuhan merujuk pada kegiatan memberi bantuan, baik berupa barang, uang, maupun tenaga kepada seseorang yang sedang mengadakan hajatan, atau bisa juga disebut sebagai kegiatan menyumbang. Tradisi ini mencerminkan nilai gotong royong dan solidaritas sosial karena keluarga dan tetangga saling bahu-membahu dalam membantu sesama.\n\nNamun, praktik buwuhan tidak lepas dari unsur pertukaran atau dipandang sebagai utang. Masyarakat meyakini bahwa segala bentuk bantuan yang diberikan akan kembali dalam bentuk yang setara ketika si pemberi mengadakan hajatan serupa. Hal ini menyebabkan buwuhan tidak lagi dipandang murni sebagai hibah atau sedekah, tetapi sebagai bentuk \"utang tertulis\" yang menimbulkan kewajiban moral untuk membalas.\n\nDalam praktiknya, buwuhan memang meringankan beban tuan rumah, tetapi dapat menimbulkan tekanan psikologis bagi penerima bantuan. Rasa malu dan kekhawatiran kehilangan harga diri mendorong sebagian orang untuk berutang demi mengembalikan buwuhan. Hal ini menyebabkan terbaginya cara pandang terhadap buwuhan. Ada yang melihatnya sebagai bentuk tolong-menolong, tetapi ada juga yang justru menganggapnya menjadi sistem utang piutang berbasis sosial. Sebagian pihak berpendapat bahwa buwuhan adalah hibah karena tujuannya adalah untuk membantu. Namun, apabila ada keharusan pengembalian, maka secara hukum dan etika, buwuhan telah bergeser dari semangat gotong royong menjadi sebuah kewajiban ekonomi yang membebani. Oleh karena itu, pemahaman masyarakat terhadap tradisi buwuhan perlu diluruskan agar nilai luhur tolong-menolong tetap terjaga tanpa menimbulkan beban yang tidak perlu."},
+
+layur: {judul:"Layur, Teruslah Berlayar", sumber:"Karya Anang YB. Sumber: buku.kemdikbud.go.id/katalog/layur-tetaplah-berlayar (dengan pengubahan)",
+teks:"\"Bapak, pulanglah,\" lirih Layur berharap. Ini hari keenam. Tiga hari adalah waktu terlama nelayan berada di laut. Dengan susah payah, Layur berpindah duduk ke dalam sebuah perahu tua. Penyangga kedua kaki Layur yang tak utuh ia letakkan di sampingnya.\n\"Jangan-jangan...\"\n\"Tidak ... Aku tidak boleh berpikiran buruk. Bapak pasti pulang dengan selamat. Aku akan tetap menunggunya di sini sambil berdoa.\"\nLayur masih ingat masa-masa dulu, ketika Bapak berlayar pada malam hari dan keesokan harinya sudah merapat kembali di pantai dengan membawa ikan berlimpah.\n\"Ayo! Siapa mau udang?\" panggil Bapak. Layur berlari kencang bersama teman-temannya. Namun, itu adalah kenangan sepuluh tahun silam. Kini, udang dan ikan kecil adalah anugerah besar. Itu pun harus dijaring di tengah laut.\nLayur ingat betul, Bapak adalah pembuat bondet paling disegani, juga berpengaruh di dusun. Setiap hari, nelayan silih berganti datang ke rumah memesan bondet. Hasil panen ikan berlimpah. Tinggal melemparkan bondet ke dalam laut dan ... bum! Berkuintal-kuintal ikan terapung tinggal diserok menggunakan jaring.\nSampai suatu ketika ...\nDUAAAR!\nSeparuh rumah Layur luluh lantak karena simpanan bondet di gudang meledak. Ledakan bondet di gudang tak hanya merusak rumah tetapi juga mencelakai anak semata wayang. Ia berteriak minta tolong, menepuk-nepuk dadanya, dan menangis. Itulah titik balik yang amat disesali Bapak. Sejak itu, Bapak meninggalkan usaha pembuatan bondet. Demikian pula dengan warga Dusun Prau tempat mereka berdiam berangsur-angsur meninggalkan cara menangkap ikan dengan bondet.\nLamat-lamat terlihat kibaran layar bercorak biru. Layur beringsut menuruni perahu tempatnya duduk. Lambaian tangan bapaknya semakin jelas dan semakin dekat.\n\"Bapak dari mana? Bapak sudah tiga hari telat pulang!\" Seru Layur kesal. Matanya berkaca-kaca, menahan rindu, dan cemas.",
+glos:"Daftar Istilah — Bondet: istilah lokal yang merujuk pada bahan peledak rakitan, sering disebut juga bom ikan."},
+
+pantai: {judul:"Pantai Bersih Tanpa Sampah", sumber:"",
+teks:"Di sebuah daerah wisata yang terkenal dengan pantainya yang indah, pemerintah setempat gencar mengampanyekan \"Pantai Bersih Tanpa Sampah.\" Spanduk dan papan peringatan terpampang di berbagai sudut. Namun, kenyataannya seringkali berbeda.\nSuatu sore, Pak Wayan, seorang nelayan tua yang sudah puluhan tahun melaut, sedang membersihkan jaringnya di tepi pantai. Di sampingnya, sekelompok turis muda asyik berpose untuk berfoto. Mereka mengenakan topi pantai yang modis, kacamata hitam, dan membawa botol minum berwarna-warni.\n\"Wah, pantainya bersih banget ya, guys!\" seru salah satu turis sambil memegang ponselnya. \"Pas banget buat konten 'liburan ramah lingkungan'!\"\nTemannya menimpali, \"Iya! Nanti caption-nya 'Menikmati keindahan alam tanpa jejak, menjaga bumi kita tercinta!'\"\nSetelah puas berfoto dari berbagai sudut dengan beragam filter, mereka beranjak pergi. Namun mereka meninggalkan botol minuman plastik kosong, bungkus keripik, dan beberapa puntung rokok yang disembunyikan di balik semak-semak. Mereka bahkan tidak berusaha mencari tempat sampah yang hanya berjarak beberapa meter.\nPak Wayan hanya bisa menggelengkan kepala. Ia berjalan mendekat dan memungut sampah-sampah itu satu per satu. Ia sudah terbiasa dengan pemandangan ini. Para turis datang untuk menikmati keindahan, berfoto, membuat konten, lalu pergi meninggalkan \"kenangan\" dalam bentuk sampah.\nTak lama kemudian, seorang petugas kebersihan berseragam oranye datang dengan sapu dan karung. \"Pak Wayan, sudah banyak lagi ya sampahnya?\" tanyanya sambil menghela napas.\n\"Sudah biasa, Nak,\" jawab Pak Wayan. \"Ini namanya 'sampah estetik'. Cuma bagus di foto, tapi busuk di mata dan bau di hidung.\"\nPetugas itu tersenyum masam. \"Iya, Pak. Kata mereka peduli lingkungan, tapi pedulinya cuma di caption media sosial.\"\nMalam harinya, di akun media sosial Pak Wayan—yang diajari cucunya—ia melihat foto-foto pantai yang diunggah para turis tadi. Pantai tampak bersih sempurna, dihiasi filter matahari terbenam yang memukau. Ia membaca caption-nya: \"Surgaku, jangan kau kotori!\"\nPak Wayan hanya bisa tersenyum getir. Sepertinya, slogan \"Pantai Bersih Tanpa Sampah\" itu hanya berlaku untuk kamera dan media sosial. Sementara di balik layar, jejak yang ditinggalkan justru lebih nyata dan memprihatinkan daripada gambar yang dipamerkan."},
+
+ekosistem: {judul:"Pulihkan Ekosistem, Menjaga Planet Kita dari Generasi ke Generasi", sumber:"uiad.ac.id/2021/06/06/opini-pulihkan-ekosistem-menjaga-planet-kita-dari-generasi-ke-generasi/ (dengan pengubahan)",
+teks:"Berdasarkan hasil riset LIPI (Lembaga Ilmu Pengetahuan Indonesia) terjadi peningkatan sampah plastik selama pandemi. Hal ini disebabkan oleh penggunaan layanan delivery makanan lewat jasa transportasi online, 96% paket dibungkus dengan plastik yang tebal dan ditambah dengan bubble wrap. Selain itu selotip, bungkus plastik, dan bubble wrap merupakan pembungkus berbahan plastik yang paling sering ditemukan. Sampah medis juga melonjak. Kementerian Lingkungan Hidup dan Kehutanan (KLHK) menyatakan bahwa selama pandemi, terjadi peningkatan timbunan sampah medis sebesar 30% hingga 50%. Dari data tersebut, Indonesia merupakan negara ke-2 penyumbang polusi sampah di lautan (3,22 metrik ton per tahun).\n\nSalah satu faktor penyebab dari permasalahan tersebut adalah dengan pertambahan jumlah penduduk akan terjadi peningkatan aktivitas manusia dan daya konsumsi yang melonjak. Hal itu menyebabkan meningkatnya jumlah dan jenis limbah sehingga menyebabkan lingkungan menjadi tercemar. Selain sampah, penebangan pohon secara liar sampai kebakaran hutan menjadi penyumbang terbesar dalam kerusakan ekosistem. Banyak aktivitas manusia yang mengancam pelestarian lingkungan sehingga menyebabkan ketidakseimbangan ekosistem. Manusia punya peran besar dalam menjaga keseimbangan ekosistem, bukan cuma untuk sekarang, tapi juga untuk generasi mendatang. Tanggung jawab dalam menjaga lingkungan, tentunya bukan hanya dibebankan oleh pemerintah saja, tetapi seluruh elemen masyarakat harus bahu-membahu dalam menjaga dan melestarikan lingkungan.\n\nBertepatan dengan peringatan Hari Lingkungan Hidup Sedunia, yang tidak hanya sebagai seremonial belaka, tentunya menjadi sebuah harapan dalam meningkatkan kesadaran menjaga dan melestarikan lingkungan. Selain itu, memberikan semangat baru bagi kita semua untuk komitmen menjaga lingkungan. Dengan memulai dari diri sendiri dan hal paling kecil, yaitu tidak membuang sampah sembarangan, terutama sampah plastik karena merusak ekosistem laut, tidak menebang pohon dengan liar hingga membuat gundul hutan. Mari bersama merobohkan jurang ekologi, memulihkan ekosistem bumi dengan pendekatan pengelolaan sumber daya alam yang adil dan berkelanjutan."},
+
+ekonomi: {judul:"Prospek Ekonomi Global di Tengah Ketidakpastian", sumber:"Disadur dan diadaptasi dari rilis pers dan laporan Global Economic Prospects, Juni 2025 oleh World Bank (Bank Dunia).",
+teks:"Jakarta, Senin, 16 Juni 2025 – Perekonomian global terus menghadapi tantangan signifikan di tengah ketidakpastian geopolitik dan tekanan inflasi yang persisten. Analisis terbaru yang dirilis pada (Senin, 2/6/2025), oleh Dana Moneter Internasional (IMF) menunjukkan adanya divergensi dalam laju pemulihan ekonomi antarwilayah, di mana beberapa negara seperti Amerika Serikat dan India menunjukkan ketahanan yang lebih baik, sementara negara-negara di Eropa dan Tiongkok masih berjuang mengatasi dampak guncangan eksternal.\n\nKenaikan harga energi dan pangan tetap menjadi pendorong utama inflasi di banyak negara, dipicu oleh gangguan rantai pasok global dan konflik di Ukraina, memaksa bank sentral untuk mempertahankan kebijakan moneter yang ketat. Upaya ini, meskipun esensial untuk mengendalikan kenaikan harga, berpotensi mengerem pertumbuhan ekonomi. Para pengambil kebijakan dihadapkan pada dilema sulit: menyeimbangkan kebutuhan untuk meredam inflasi tanpa memicu resesi yang dalam.\n\n\"Kami melihat adanya perlambatan pertumbuhan global yang signifikan di tahun ini, dan risiko resesi menjadi lebih nyata jika bank sentral terlalu agresif dalam menaikkan suku bunga,\" ujar seorang ekonom senior dari Bank Dunia, dalam sebuah webinar yang diadakan, (Rabu, 11/6).\n\nDi sisi lain, sektor manufaktur global menunjukkan tanda-tanda perlambatan, tercermin dari menurunnya indeks manajer pembelian (PMI) di beberapa ekonomi besar seperti Jerman dan Jepang. Penurunan permintaan ekspor dan gangguan rantai pasok masih menjadi perhatian utama bagi produsen. Namun, sektor jasa justru menunjukkan resiliensi yang lebih kuat, didukung oleh kembali normalnya aktivitas setelah pandemi, sebuah tren yang mulai terlihat sejak awal Desember 2024.\n\nPasar tenaga kerja di beberapa negara maju masih relatif ketat, dengan tingkat pengangguran yang rendah. Kondisi ini memberikan dukungan terhadap daya beli konsumen, meskipun tekanan biaya hidup yang tinggi dapat mengikis dampaknya. Sementara itu, investasi langsung asing (FDI) cenderung melambat, mencerminkan kehati-hatian investor di tengah prospek ekonomi yang tidak menentu.\n\nKe depan, koordinasi kebijakan ekonomi antarnegara akan menjadi kunci untuk menstabilkan kondisi global. Reformasi struktural yang bertujuan meningkatkan produktivitas dan daya saing juga dianggap krusial untuk memastikan pertumbuhan yang berkelanjutan dalam jangka panjang. Para ekonom memprediksi bahwa prospek ekonomi akan sangat bergantung pada evolusi inflasi, respons kebijakan moneter, dan perkembangan situasi geopolitik di seluruh dunia. Bagi Indonesia, kondisi ini menuntut kewaspadaan dan diversifikasi ekonomi agar tidak terlalu rentan terhadap gejolak global dalam kurun waktu tiga hingga enam bulan ke depan, terhitung sejak (16/6/2025)."},
+
+meratus: {judul:"Roh Meratus", sumber:"Cerpen karya Zaidinoor",
+teks:".............\nKami kembali berjalan pulang. Kondisiku sudah sepenuhnya normal. Tetua melangkah di depanku. Tak kusangka, dalam keadaan kritis ternyata kami telah sangat jauh memasuki belantara. Aku memperhatikan pohon-pohon besar yang kami lewati. Sinar matahari bahkan hampir tak bisa menembus ke bawah.\nAku merasa asing di tempat ini. Pohon-pohon yang berlumut itu, sulur-sulur yang bergantungan, semak-semak yang rimbun itu. Oh... ternyata belantara ini adalah tempat menakjubkan. Bayangkan, di lumut batang pohon itu udang-udang kecil berloncatan lincah. Belum pernah aku melihat udang hidup di batang pohon!\n\"Kau tahu anak muda, tempat ini merasa terancam dengan keberadaan...\" tetua menghentikan langkahnya dan mengambil sesuatu dalam butah. \"Roh Meratus meniupkan wisa ke tubuh kalian, sayang kawan-kawanmu yang lain terlambat,\" sambungnya kemudian melemparkan gulungan kertas yang diambil dari butah. Sigap kutangkap gulungan itu.\n\"Itu peta yang kuambil dari ranselmu. Ternyata kalian memasang patok-patok dan memberi tanda pohon-pohon besar untuk ditebang. Dan perlu kau ketahui anak muda, tempat ini juga termasuk wilayah yang akan kalian pasangi patok-patok itu,\" katanya dingin.\nPerlahan kubuka gulungan peta di tanganku. Dari peta terlihat jelas, pekerjaan kami tinggal sedikit lagi. Jika saja semuanya lancar, maka kami akan sampai di tempat ini dan selesailah kontrak kerja kami. Dalam waktu singkat, mungkin alat-alat berat akan didatangkan! Pohon-pohon ini, sulur-sulur ini, lumut-lumut ini, udang-udang ini...akan bagaimana?\n\"Tetua, izinkan aku tinggal di sini dan bersama kaummu menjaga tempat ini...\" Akhirnya setelah lama hanya diam, aku menatap mata tetua mantap.",
+glos:"Glosarium — Butah: wadah atau tempat yang digunakan untuk membawa sesuatu, biasanya terbuat dari anyaman rotan atau bambu. Wisa: bisa atau racun."},
+
+hudoq: {judul:"Tari Hudoq: Warisan Budaya yang Harus Dilestarikan", sumber:"",
+teks:"Tari Hudoq dari suku Dayak Modang di Kalimantan Timur bukan sekadar tontonan seni biasa. Lebih dari itu, tarian ini adalah warisan budaya yang sarat akan makna spiritual dan simbolis. Oleh karena itu, melestarikan Tari Hudoq menjadi sebuah keharusan, tidak hanya untuk menjaga keragaman budaya antarwilayah Indonesia, tetapi juga untuk mengingatkan kita akan pentingnya hubungan harmonis antara manusia dan alam.\n\nPertama, Tari Hudoq adalah cerminan dari kearifan lokal yang mengajarkan nilai-nilai fundamental. Tarian ini merupakan bagian integral dari ritual keagamaan untuk menjalin hubungan harmonis dengan roh penjaga pertanian, Halaeng Hebound, dan roh pelindung umat manusia, Selo Sen. Dalam era modern yang sering kali mengabaikan hubungan manusia dengan alam, tarian ini berfungsi sebagai pengingat kuat akan ketergantungan kita pada alam dan pentingnya menghormati kekuatan yang lebih besar dari kita.\n\nKedua, setiap elemen dalam Tari Hudoq mengandung simbolisme yang mendalam dan relevan. Penggunaan topeng kayu besar dan dedaunan yang menutupi tubuh penari bukan sekadar properti, melainkan representasi kekuatan dan perlindungan dari roh-roh tersebut. Gerakan tari yang menggambarkan keteguhan petani serta nyanyian tradisional mengiringinya adalah permohonan tulus kepada alam semesta untuk memberikan keseimbangan dan kesuksesan panen. Menghilangkan tarian ini berarti menghilangkan esensi budaya Dayak Modang itu sendiri.\n\nKetiga, Tari Hudoq memiliki nilai edukatif yang tinggi bagi masyarakat luas, termasuk wisatawan. Pertunjukan ini tidak hanya memukau secara visual, tetapi juga memberikan pemahaman tentang pentingnya keseimbangan alam dan hubungan spiritual yang mendalam. Dengan melestarikan dan memperkenalkan tarian ini kepada publik lebih luas, kita tidak hanya menjaga keberadaan tarian ini tetapi juga menyebarkan pesan penting menjaga lingkungan dan menghargai nilai-nilai tradisional.\n\nDengan demikian, jelaslah bahwa Tari Hudoq bukan sekadar pertunjukan, melainkan sebuah jembatan spiritual yang menghubungkan manusia dengan alam dan leluhur. Mengabaikan pelestariannya sama saja dengan mengabaikan kekayaan budaya dan kearifan lokal yang menjadi fondasi budaya kita. Pelestarian Tari Hudoq adalah investasi untuk masa depan, memastikan bahwa nilai-nilai berharga ini tetap hidup dan relevan bagi generasi mendatang."},
+
+belis: {judul:"Tradisi Belis: Simbol Budaya yang Menyimpan Beban Finansial di Era Modern", sumber:"beritakini.co.id ; krajan.id (dengan pengubahan)",
+teks:"Belis adalah tradisi di wilayah Indonesia bagian timur seperti Nusa Tenggara Timur, yang secara umum di Indonesia dikenal dengan mas kawin atau mahar. Tradisi ini melambangkan penghormatan kepada wanita dan penyatuan keluarga. Namun, di balik nilainya, belis sering menjadi beban finansial berat bagi pihak laki-laki, yang kadang memicu tekanan psikologis dan mengganggu hubungan kekeluargaan. Beberapa pihak, terutama para sesepuh desa atau orang-orang tua, kadang terlalu kukuh untuk mempertahankan tradisi dan membuat tekanan dengan nilai yang semakin naik.\n\nBelis memiliki makna yang mendalam dan dianggap sebagai bentuk pengakuan atas peran penting seorang perempuan di dalam keluarga. Belis merupakan representasi keseriusan dan komitmen seorang pria untuk membangun keluarga. Proses penyerahan belis tidak hanya dimaknai sebagai pertukaran materi, tetapi juga sebagai simbol penyatuan dua komunitas besar, yakni keluarga kedua belah pihak. Pada masyarakat Lamaholot misalnya, belis diwujudkan dalam bentuk gading gajah atau bala, yang besarnya disesuaikan dengan status sosial seorang perempuan. Selain itu, disertakan juga pelengkap belis seperti sarung tenun sutra dan ternak. Uniknya, meskipun belis dari pihak laki-laki, pihak keluarga perempuan memberikan balasan simbolis kepada pihak laki-laki dalam bentuk barang berharga lainnya. Tradisi ini mengajarkan keseimbangan dan saling menghargai di antara kedua belah pihak.\n\nMeskipun belis mengandung nilai-nilai yang positif, tantangannya saat ini adalah menjaga agar tradisi tersebut tidak menjadi beban finansial yang berat. Tuntutan belis yang tinggi sering kali menjadi sumber tekanan, terutama bagi keluarga laki-laki. Dalam beberapa kasus, perkara belis dapat berimbas pada kesehatan mental hingga memicu tindakan tragis, seperti yang pernah terjadi di Kupang. Selain menjadi tantangan finansial, besarnya tuntutan materi untuk belis juga sering kali menimbulkan ketegangan dan konflik di antara pasangan dan keluarganya. Ketika keluarga perempuan menetapkan nominal belis yang tinggi, tidak jarang hal ini membangkitkan sentimen negatif dari pihak laki-laki yang merasa tertekan dan kehilangan martabat jika tidak mampu memenuhinya. Alhasil, penundaan pernikahan diambil guna memenuhi permintaan belis. Konflik semacam ini bisa merusak hubungan dua keluarga yang harusnya harmonis.\n\n\"Dengan demikian, perlu untuk memikirkan ulang makna belis dan menetapkan cara ataupun perhitungan besaran belis yang lebih fleksibel.\""}
+};
+
+const DATA = [
+// ===== A. TEKS BUWUHAN =====
+{sec:"A. Teks: Tradisi Buwuhan", bacaanKey:"buwuhan", n:1, tipe:"pg",
+ teks:"Apa makna kata hajatan pada teks tersebut?",
+ opsi:{A:"Kegiatan kerja bakti membersihkan lingkungan sekitar.",B:"Pertemuan rutin warga untuk membahas masalah lingkungan.",C:"Diskusi keluarga besar untuk menentukan pembagian warisan.",D:"Permohonan bantuan yang dilakukan tuan rumah kepada tetangga.",E:"Acara atau pesta yang diadakan untuk memperingati hal penting."},
+ jawaban:"E", bahas:"Teks menyebut hajatan dalam konteks 'pernikahan atau khitanan' — acara/pesta untuk memperingati momen penting."},
+
+{sec:"A. Teks: Tradisi Buwuhan", bacaanKey:"buwuhan", n:2, tipe:"pg",
+ teks:"Manakah gagasan yang mendukung ide pokok bahwa buwuhan adalah bentuk utang?",
+ opsi:{A:"Praktik buwuhan disertai dengan perjanjian utang piutang secara tertulis.",B:"Buwuhan disertai kesepakatan untuk selalu memberi lebih dari yang diterima.",C:"Bentuk buwuhan dapat berupa sedekah atau hibah yang harus dibayar kembali.",D:"Buwuhan dilakukan oleh tetangga dan kerabat sebagai bentuk pertukaran solidaritas.",E:"Penerima buwuhan merasa harus mengembalikan bantuan yang diterima di kemudian hari."},
+ jawaban:"E", bahas:"Teks: 'Rasa malu dan kekhawatiran kehilangan harga diri mendorong sebagian orang untuk berutang demi mengembalikan buwuhan' — ini menunjukkan penerima merasa berkewajiban membalas di kemudian hari, mendukung gagasan buwuhan sebagai bentuk utang."},
+
+{sec:"A. Teks: Tradisi Buwuhan", bacaanKey:"buwuhan", n:3, tipe:"pg",
+ teks:"Hubungan makna paragraf kedua dan ketiga adalah ....",
+ opsi:{A:"perbedaan jenis buwuhan berdasarkan jenis acara yang dilangsungkan",B:"penjelasan sebab dan akibat dari perbedaan pandangan mengenai buwuhan",C:"penjelasan dampak buruk dari adanya pandangan buwuhan sebagai sedekah",D:"perbedaan tata cara buwuhan pada beberapa kelurahan atau desa di Surabaya",E:"penjelasan hubungan hukum agama dengan pengertian masyarakat terhadap buwuhan"},
+ jawaban:"B", bahas:"Paragraf kedua menjelaskan SEBAB (buwuhan dipandang sebagai utang), paragraf ketiga menjelaskan AKIBATNYA (tekanan psikologis, terbaginya cara pandang masyarakat)."},
+
+{sec:"A. Teks: Tradisi Buwuhan", bacaanKey:"buwuhan", n:4, tipe:"pg",
+ teks:"\"Oleh karena itu, pemahaman masyarakat terhadap tradisi buwuhan perlu diluruskan agar nilai luhur tolong-menolong tetap terjaga tanpa menimbulkan beban yang tidak perlu.\"\n\nKalimat tersebut dapat menjadi kesimpulan yang sesuai teks argumentasi karena ....",
+ opsi:{A:"merangkum sebab-akibat dari adanya tradisi buwuhan di wilayah Surabaya",B:"menyimpulkan ketidaksetujuan masyarakat terhadap penghapusan tradisi buwuhan",C:"menyangkal pandangan negatif yang ada di masyarakat untuk pelestarian buwuhan",D:"menyimpulkan berbagai pandangan masyarakat terhadap konsep buwuhan",E:"menggarisbawahi solusi untuk melestarikan tradisi buwuhan di seluruh wilayah Jawa"},
+ jawaban:"D", bahas:"Kalimat penutup ini merangkum keseluruhan diskusi tentang berbagai pandangan masyarakat (positif sebagai tolong-menolong, negatif sebagai beban utang) dan mengajak pelurusan pemahaman — bukan solusi khusus untuk 'seluruh Jawa' (E terlalu spesifik/tidak didukung teks).\n\nCatatan: pada sumber asli, soal ini tampil dengan dua nomor indikator berbeda (4 dan 25) namun isinya identik, sehingga hanya ditampilkan sekali di sini."},
+
+// ===== B. TEKS LAYUR, TERUSLAH BERLAYAR =====
+{sec:"B. Teks: Layur, Teruslah Berlayar", bacaanKey:"layur", n:5, tipe:"pg",
+ teks:"Berdasarkan teks tersebut, bagaimana sifat yang dimiliki oleh Layur?",
+ opsi:{A:"Nekat dan optimis",B:"Mudah cemas dan tabah",C:"Penuh harap dan kasih sayang",D:"Suka menyendiri dan tegas",E:"Cepat panik dan menyalahkan keadaan"},
+ jawaban:"C", bahas:"Layur digambarkan penuh harap (berdoa, yakin Bapak pulang selamat, terus menunggu) dan penuh kasih sayang (kekhawatiran serta kerinduan pada Bapak)."},
+
+{sec:"B. Teks: Layur, Teruslah Berlayar", bacaanKey:"layur", n:6, tipe:"pg",
+ teks:"Apa yang menyebabkan Layur kesal kepada Bapak?",
+ opsi:{A:"Tidak pamit kepada Layur saat hendak berlayar",B:"Tidak membawa banyak ikan dari laut",C:"Tidak setuju Layur menunggu terlalu lama di pantai",D:"Tidak kunjung pulang setelah enam hari melaut",E:"Tidak menepati janjinya untuk pulang tepat waktu ketika melaut"},
+ jawaban:"E", bahas:"Layur berseru, 'Bapak sudah tiga hari telat pulang!' — Bapak tidak menepati waktu kepulangan yang seharusnya (biasanya melaut hanya semalam, kini terlambat tiga hari dari perkiraan)."},
+
+{sec:"B. Teks: Layur, Teruslah Berlayar", bacaanKey:"layur", n:7, tipe:"pg",
+ teks:"Bagaimana kisah yang sesuai untuk menutup cerita Layur merasa lega pada cerita tersebut?",
+ opsi:{A:"Bapak meminta maaf pada Layur dan menceritakan penyebabnya pulang terlambat",B:"Bapak membimbing Layur pulang dan berjanji untuk tidak pulang terlambat lagi",C:"Bapak memeluk Layur dan merasa senang karena akhirnya bisa bertemu putrinya kembali",D:"Layur membereskan sampan dan memberikan hasil tangkapan yang tidak seberapa kepada Bapak",E:"Layur berterima kasih kepada Bapak karena telah menunggunya pulang dari melaut berhari-hari"},
+ jawaban:"C", bahas:"Untuk mencapai perasaan 'lega' setelah penantian cemas, penutup paling sesuai adalah momen reuni emosional — Bapak memeluk Layur, bahagia bertemu kembali."},
+
+{sec:"B. Teks: Layur, Teruslah Berlayar", bacaanKey:"layur", n:8, tipe:"pg",
+ teks:"Bagaimana reaksi yang ditunjukkan oleh Bapak ketika rumahnya luluh lantak dan bondet buatannya melukai Layur?",
+ opsi:{A:"Merasa trauma dan membutuhkan waktu untuk menyendiri",B:"Menunjukkan respons yang biasa seperti tidak terjadi apa-apa",C:"Sangat terkejut dan sungguh menyesal atas apa yang dilakukan",D:"Marah terhadap orang lain dan merasa panik yang luar biasa",E:"Bingung dan berusaha mencerna terhadap apa yang telah terjadi"},
+ jawaban:"C", bahas:"Teks: 'Itulah titik balik yang amat disesali Bapak. Sejak itu, Bapak meninggalkan usaha pembuatan bondet' — menunjukkan penyesalan mendalam yang membuatnya berhenti total dari usaha tersebut."},
+
+// ===== C. TEKS PANTAI BERSIH TANPA SAMPAH =====
+{sec:"C. Teks: Pantai Bersih Tanpa Sampah", bacaanKey:"pantai", n:9, tipe:"pg",
+ teks:"Manakah urutan peristiwa berikut yang paling sesuai dengan isi teks?",
+ opsi:{A:"Pak Wayan melihat foto turis di media sosial → petugas kebersihan datang → turis membuat konten",B:"Turis berfoto dan membuat konten → Pak Wayan memungut sampah → petugas kebersihan datang",C:"Pemerintah mengampanyekan kebersihan → Pak Wayan melihat foto turis → petugas kebersihan datang",D:"Petugas kebersihan datang → turis membuat konten di media sosial → Pak Wayan memungut sampah",E:"Pak Wayan memungut sampah → turis membuat konten → pemerintah mengampanyekan kebersihan"},
+ jawaban:"B", bahas:"Urutan sesuai teks: turis berfoto & membuat konten lalu pergi meninggalkan sampah → Pak Wayan memungut sampah → petugas kebersihan datang → (malam harinya) Pak Wayan melihat foto turis di medsos."},
+
+{sec:"C. Teks: Pantai Bersih Tanpa Sampah", bacaanKey:"pantai", n:10, tipe:"pg",
+ teks:"Apa pesan moral yang disiratkan melalui dialog antara Pak Wayan dan petugas kebersihan?",
+ opsi:{A:"Menjaga kebersihan pantai adalah tanggung jawab utama pemerintah dan petugas kebersihan",B:"Wisatawan seringkali menikmati keindahan alam tanpa memiliki kepedulian yang mendalam",C:"Kesadaran lingkungan sejati harus dibuktikan lewat tindakan, bukan hanya kata-kata di media sosial",D:"Media sosial bisa menjadi sarana positif untuk mengampanyekan kepedulian terhadap lingkungan",E:"Nelayan dan petugas kebersihan sering kali menjadi pihak yang terdampak langsung oleh sampah"},
+ jawaban:"C", bahas:"Dialog petugas: 'Kata mereka peduli lingkungan, tapi pedulinya cuma di caption media sosial' — pesan moralnya adalah kepedulian lingkungan harus dibuktikan lewat tindakan nyata, bukan sekadar kata-kata/citra di medsos."},
+
+{sec:"C. Teks: Pantai Bersih Tanpa Sampah", bacaanKey:"pantai", n:11, tipe:"pg",
+ teks:"Manakah relevansi paling kuat antara sindiran dalam teks dengan realitas kehidupan sehari-hari, terutama terkait kesadaran lingkungan dan pencitraan?",
+ opsi:{A:"Kritik terhadap kampanye \"Pantai Bersih\" yang hanya menjadi slogan, menunjukkan kurangnya efektivitas program pemerintah",B:"Sindiran bagi pembuat konten \"liburan ramah lingkungan\" hanya untuk pencitraan semata karena tetap membuang sampah sembarangan",C:"Penggambaran turis yang kewalahan dan menghela napas mencerminkan beban kerja yang berat karena perilaku abai para pengunjung",D:"Keadaan Pak Wayan yang terbiasa dengan pemandangan sampah di pantai menunjukkan adanya budaya pasrah terhadap masalah lingkungan",E:"Kontras antara spanduk \"Bersih Tanpa Sampah\" dengan sampah kenangan yang ditinggalkan, menunjukkan perlunya pengawasan ketat"},
+ jawaban:"B", bahas:"Inti sindiran cerita adalah ironi turis yang membuat konten 'liburan ramah lingkungan' demi citra di media sosial, sementara perilaku nyata mereka (membuang sampah sembarangan) bertentangan — fenomena pencitraan lingkungan yang relevan dengan kehidupan sehari-hari saat ini."},
+
+// ===== D. TEKS PULIHKAN EKOSISTEM =====
+{sec:"D. Teks: Pulihkan Ekosistem", bacaanKey:"ekosistem", n:12, tipe:"pg",
+ teks:"Bagaimana hubungan makna antara paragraf 1 dan paragraf 2 dalam teks tersebut?",
+ opsi:{A:"Paragraf 2 menjelaskan akibat dari fenomena sampah yang diuraikan di paragraf 1",B:"Paragraf 2 menyajikan solusi awal untuk permasalahan yang diperkenalkan di paragraf 1",C:"Paragraf 2 memberikan contoh spesifik dari jenis sampah yang disebutkan di paragraf 1",D:"Paragraf 2 mengkritisi data yang rancu tentang sampah yang disajikan di paragraf 1",E:"Paragraf 2 menguraikan penyebab dari permasalahan yang dijabarkan di paragraf 1"},
+ jawaban:"E", bahas:"Paragraf 2 dibuka dengan 'Salah satu faktor penyebab dari permasalahan tersebut adalah...' — secara eksplisit menjelaskan PENYEBAB dari fenomena peningkatan sampah yang dijabarkan di paragraf 1."},
+
+{sec:"D. Teks: Pulihkan Ekosistem", bacaanKey:"ekosistem", n:13, tipe:"kategori",
+ teks:"Aktivitas manusia memberikan dampak besar terhadap pencemaran lingkungan di Indonesia. Data apa saja yang mendukung opini penulis tersebut?",
+ petunjuk:"Klik pilihan Benar atau Salah untuk setiap pernyataan sesuai isi teks!",
+ pernyataan:[
+   {teks:"Peningkatan aktivitas manusia yang menyebabkan lingkungan tercermar didukung oleh data lonjakan timbunan sampah medis sebesar 30–50%.", benar:true},
+   {teks:"Tingginya jumlah dan jenis limbah didukung oleh data bahwa 96% paket dibungkus dengan plastik tebal dan bubble wrap.", benar:true},
+   {teks:"Kebakaran hutan yang merusak ekosistem didukung data bahwa Indonesia merupakan negara ke-2 penyumbang sampah [laut].", benar:false}
+ ],
+ bahas:"1) Sesuai teks: KLHK menyatakan peningkatan sampah medis 30–50% selama pandemi — mendukung klaim aktivitas manusia mencemari lingkungan → BENAR.\n2) Sesuai teks: 96% paket delivery dibungkus plastik tebal+bubble wrap — mendukung klaim tingginya jumlah/jenis limbah → BENAR.\n3) Data 'Indonesia negara ke-2 penyumbang sampah laut' berkaitan dengan SAMPAH PLASTIK, bukan dengan klaim KEBAKARAN HUTAN (yang merupakan isu terpisah dalam teks). Data ini TIDAK mendukung klaim tentang kebakaran hutan → SALAH."},
+
+{sec:"D. Teks: Pulihkan Ekosistem", bacaanKey:"ekosistem", n:14, tipe:"pg",
+ teks:"Mengapa penulis memilih istilah 'bahu-membahu' untuk menggambarkan peran semua pihak dalam upaya pelestarian lingkungan?",
+ opsi:{A:"Memperkuat makna pentingnya kolaborasi berbagai pihak untuk mencapai tujuan",B:"Memberikan sedikit kesan informal yang mungkin kurang pas untuk teks opini",C:"Mengindikasikan bahwa idiom lebih cocok digunakan untuk konteks fisik",D:"Menyiratkan adanya paksaan atau tekanan dari satu pihak kepada pihak lain",E:"Menunjukkan bahwa konteks ini terlalu ambigu dan tidak ada definisi yang jelas"},
+ jawaban:"A", bahas:"'Bahu-membahu' berarti bekerja sama/bergotong royong — istilah ini memperkuat makna pentingnya kolaborasi semua elemen masyarakat (bukan hanya pemerintah) dalam menjaga lingkungan."},
+
+// ===== E. TEKS PROSPEK EKONOMI GLOBAL =====
+{sec:"E. Teks: Prospek Ekonomi Global", bacaanKey:"ekonomi", n:15, tipe:"pg",
+ teks:"Fenomena yang menggambarkan \"inflasi\" berdasarkan teks di atas adalah ....",
+ opsi:{A:"Pengencangan anggaran negara karena kurangnya barang dan jasa",B:"Kenaikan harga barang dan jasa secara terus menerus dalam kurun waktu tertentu",C:"Biaya yang mendorong kemandirian ekonomi hingga mampu bersaing secara global",D:"Pergeseran tren pasar global terhadap produk-produk dari Indonesia",E:"Lambatnya sektor manufaktur global akibat menurunnya pembelian"},
+ jawaban:"B", bahas:"Inflasi secara umum berarti kenaikan harga barang dan jasa secara terus-menerus dalam periode tertentu, sesuai konteks 'kenaikan harga energi dan pangan tetap menjadi pendorong utama inflasi' pada teks."},
+
+{sec:"E. Teks: Prospek Ekonomi Global", bacaanKey:"ekonomi", n:16, tipe:"pg",
+ teks:"Peristiwa yang menggambarkan tantangan perekonomian global adalah ....",
+ opsi:{A:"Bank sentral di seluruh dunia mengesampingkan kebijakan moneter demi pertumbuhan ekonomi",B:"Geopolitik berperan penting dalam menjaga kestabilan dan kekuatan perekonomian pada skala global",C:"Pertumbuhan ekonomi melambat sehingga memicu terjadinya resesi yang dialami masyarakat secara global",D:"Harga energi, pangan, dan komoditas lainnya yang tidak menentu terus menekan daya beli masyarakat",E:"Geopolitik memperlancar jalur perdagangan dan produksi sehingga menciptakan inflasi besar-besaran"},
+ jawaban:"D", bahas:"Teks secara eksplisit menyatakan kenaikan harga energi dan pangan sebagai pendorong utama inflasi yang menekan ekonomi — ini adalah tantangan FAKTUAL yang sedang terjadi, bukan sekadar risiko hipotetis seperti opsi C."},
+
+{sec:"E. Teks: Prospek Ekonomi Global", bacaanKey:"ekonomi", n:17, tipe:"pg",
+ teks:"Manakah pernyataan yang dapat menjadi kelanjutan teks tersebut?",
+ opsi:{A:"Peran aktif IMF dan Bank Dunia dalam menanggulangi krisis ekonomi dan pembentukan SDM di negara berkembang secara global",B:"Dampak langsung kebijakan suku bunga bank sentral terhadap tingkat pengangguran di setiap negara dan menjadi masalah global",C:"Analisis mendalam mengenai skenario dan kemungkinan-kemungkinan terkait evolusi inflasi, respons kebijakan, serta situasi geopolitik",D:"Analisis mengenai skenario dan kemungkinan-kemungkinan terkait evolusi inflasi, respons kebijakan, serta situasi geopolitik global",E:"Pentingnya investasi di sektor manufaktur untuk meningkatkan ekspor dan mengurangi gangguan rantai pasok secara global"},
+ jawaban:"D", bahas:"Paragraf penutup teks menyebutkan prospek ekonomi bergantung pada 'evolusi inflasi, respons kebijakan moneter, dan perkembangan situasi geopolitik DI SELURUH DUNIA' — paling sesuai dengan opsi D yang menyertakan kata 'global' secara eksplisit."},
+
+// ===== F. TEKS ROH MERATUS =====
+{sec:"F. Teks: Roh Meratus", bacaanKey:"meratus", n:18, tipe:"pg",
+ teks:"Latar tempat yang tergambar dalam cerita tersebut adalah ....",
+ opsi:{A:"sebuah perkampungan penduduk adat",B:"daerah perkotaan yang ramai",C:"pegunungan batu yang tandus",D:"hutan belantara yang lebat",E:"pantai dengan pasir putih"},
+ jawaban:"D", bahas:"Teks menggambarkan 'memasuki belantara', 'pohon-pohon besar', 'sulur-sulur bergantungan', 'semak-semak rimbun' — jelas menggambarkan hutan belantara yang lebat."},
+
+{sec:"F. Teks: Roh Meratus", bacaanKey:"meratus", n:19, tipe:"pg",
+ teks:"Apa yang menyebabkan konflik dalam kutipan cerpen tersebut?",
+ opsi:{A:"Tokoh utama dan kawan-kawan tersesat di tengah hutan belantara",B:"Kawan-kawan tokoh utama mengalami hal buruk karena wisa yang ditiupkan",C:"Tetua menemukan peta dari ransel tokoh utama",D:"Ketua adat tidak menyukai kehadiran orang luar di wilayahnya",E:"Kelompok tokoh utama dianggap mengancam kelestarian hutan"},
+ jawaban:"E", bahas:"Konflik muncul karena kelompok tokoh utama datang untuk memasang patok dan menandai pohon-pohon untuk ditebang (bagian dari kontrak kerja) — tindakan ini dianggap mengancam kelestarian hutan yang dijaga tetua dan Roh Meratus."},
+
+// ===== G. TEKS TARI HUDOQ =====
+{sec:"G. Teks: Tari Hudoq", bacaanKey:"hudoq", n:20, tipe:"pg",
+ teks:"Bagaimana keterkaitan antara paragraf ketiga dengan paragraf keempat pada teks tersebut?",
+ opsi:{A:"Paragraf ketiga dan keempat saling melengkapi argumen tentang pentingnya pelestarian Tari Hudoq",B:"Paragraf ketiga dan keempat sama-sama menjelaskan tentang ritual pertanian dengan penekanan pada sejarah",C:"Paragraf ketiga menguraikan makna filosofis Tari Hudoq yang sudah disinggung pada paragraf keempat",D:"Paragraf ketiga adalah opini penulis tentang tari hudoq yang didukung oleh data penjelas pada paragraf keempat",E:"Paragraf ketiga menjabarkan tantangan budaya tentang tari hudoq dan paragraf keempat berisi penyelesaiannya"},
+ jawaban:"A", bahas:"Paragraf ketiga membahas nilai edukatif & pentingnya melestarikan Tari Hudoq; paragraf keempat (penutup) menyimpulkan dan menegaskan kembali pentingnya pelestarian sebagai 'investasi masa depan' — keduanya saling melengkapi argumen tentang pentingnya pelestarian."},
+
+{sec:"F. Teks: Roh Meratus (lanjutan)", bacaanKey:"meratus", n:21, tipe:"kategori",
+ teks:"Perubahan sikap tokoh utama ditunjukkan melalui tindakannya di akhir kutipan.\n\nManakah pernyataan yang paling tepat untuk menilai kesesuaian antara karakter tokoh dengan tindakannya?",
+ petunjuk:"Klik Benar atau Salah pada setiap pernyataan berikut!",
+ pernyataan:[
+   {teks:"Tindakan tokoh utama sesuai karena ia menunjukkan kepedulian terhadap kelestarian hutan setelah mengalami perubahan pandangan.", benar:true},
+   {teks:"Tindakan tokoh utama tidak sesuai karena ia telah meninggalkan kewajiban dalam menyelesaikan kontrak kerja.", benar:false},
+   {teks:"Tindakan tokoh utama sesuai karena ia ingin membuktikan bahwa ia mampu memimpin proyek tanpa menggunakan alat berat.", benar:false}
+ ],
+ bahas:"1) Tokoh utama menunjukkan perubahan nyata di akhir kutipan (kagum pada keajaiban hutan, lalu meminta izin tinggal menjaganya) — tindakannya konsisten dengan perubahan pandangan ini → BENAR.\n2) Meninggalkan kontrak kerja justru merupakan konsekuensi WAJAR dan konsisten dari perubahan karakternya (bukan ketidaksesuaian) — pernyataan ini salah menilai sebagai 'tidak sesuai' → SALAH.\n3) Tidak ada indikasi dalam teks bahwa motivasinya adalah membuktikan kemampuan memimpin proyek — alasan ini tidak didukung teks → SALAH."},
+
+// ===== H. TEKS BELIS =====
+{sec:"H. Teks: Belis", bacaanKey:"belis", n:22, tipe:"pg",
+ teks:"Apa makna kata sesepuh pada teks tersebut?",
+ opsi:{A:"keluarga yang dihormati oleh seluruh warga desa",B:"orang yang dituakan atau dijadikan pemimpin",C:"masyarakat yang memiliki peran penting",D:"pengurus atau perangkat desa yang sudah tua",E:"laki-laki yang sudah menikah dan memiliki anak"},
+ jawaban:"B", bahas:"'Sesepuh' bermakna orang yang dituakan/dihormati karena usia dan kebijaksanaannya, sering dijadikan panutan atau pemimpin informal dalam masyarakat."},
+
+{sec:"H. Teks: Belis", bacaanKey:"belis", n:23, tipe:"pg",
+ teks:"Tradisi belis memiliki banyak nilai positif. Manakah gagasan penjelas yang mendukung gagasan pokok tersebut?",
+ opsi:{A:"Jumlah belis ditentukan secara sepihak oleh keluarga perempuan.",B:"Belis merupakan simbol keseriusan dan ketulusan dari pihak perempuan.",C:"Balasan dari keluarga perempuan biasanya permintaan dari pihak laki-laki.",D:"Belis menjadi wahana penghormatan dan juga penyatuan kedua pihak keluarga.",E:"Belis harus berupa gading gajah yang tidak bisa digantikan dengan benda lain."},
+ jawaban:"D", bahas:"Teks: 'Belis melambangkan penghormatan kepada wanita dan penyatuan keluarga... simbol penyatuan dua komunitas besar' — sesuai opsi D. (Opsi B keliru karena teks menyebut keseriusan itu berasal dari PIHAK LAKI-LAKI, bukan perempuan.)"},
+
+{sec:"H. Teks: Belis", bacaanKey:"belis", n:24, tipe:"pg",
+ teks:"Bagaimana hubungan makna antara paragraf kedua dan ketiga pada teks tersebut?",
+ opsi:{A:"Paragraf kedua mempertentangkan mengenai pelestarian tradisi belis beserta contohnya di paragraf ketiga.",B:"Paragraf kedua memberikan penjelasan alasan tradisi belis yang digambarkan perlu dipertahankan di paragraf ketiga.",C:"Paragraf ketiga memberikan perbandingan penerapan tradisi belis di beberapa daerah yang dijelaskan di paragraf kedua.",D:"Paragraf ketiga menjelaskan tata laksana tradisi belis berdasarkan filosofinya seperti yang diurakan di paragraf kedua.",E:"Paragraf ketiga memaparkan dampak negatif tradisi belis, meskipun maknanya baik seperti yang dijelaskan di paragraf kedua."},
+ jawaban:"E", bahas:"Paragraf kedua menjelaskan makna POSITIF belis (penghormatan, penyatuan keluarga). Paragraf ketiga dibuka dengan 'Meskipun belis mengandung nilai-nilai yang positif, tantangannya saat ini adalah...' — memaparkan DAMPAK NEGATIF (beban finansial, konflik) meski maknanya baik."}
+];
+
+const jawabanUser = {};
+const quizView = document.getElementById('quiz-view');
+const btnSubmit = document.getElementById('btn-submit');
+const peringatan = document.getElementById('peringatan');
+
+function renderBacaan(key){
+  const b = BACAAN[key];
+  let html = `<div class="bacaan"><h3>${b.judul}</h3>${b.teks}`;
+  if(b.glos) html += `<div class="glos">${b.glos}</div>`;
+  html += `</div>`;
+  if(b.sumber) html += `<div class="sumber">Sumber: ${b.sumber}</div>`;
+  return html;
+}
+
+function renderQuiz(){
+  const sections = [...new Set(DATA.map(d=>d.sec))];
+  let html = '';
+  sections.forEach(sec=>{
+    html += `<section class="bagian"><h2>${sec}</h2>`;
+    const soalDiSeksi = DATA.filter(d=>d.sec===sec);
+    html += renderBacaan(soalDiSeksi[0].bacaanKey);
+    soalDiSeksi.forEach(q=>{
+      html += `<div class="soal" id="soal-${q.n}">`;
+      let tipeLabel = q.tipe==='kompleks' ? 'Pilihan Ganda Kompleks' : (q.tipe==='kategori' ? 'PG Kompleks · Kategori' : 'Pilihan Ganda');
+      html += `<div class="no">Soal ${q.n} <span class="tipe-pill">${tipeLabel}</span></div>`;
+      html += `<div class="teks">${q.teks}</div>`;
+
+      if(q.tipe==='kategori'){
+        html += `<div class="petunjuk-kompleks">${q.petunjuk||'Tentukan Benar atau Salah untuk setiap pernyataan.'}</div>`;
+        html += `<table class="kategori-tabel"><tr><th>Pernyataan</th><th class="pilih">Benar</th><th class="pilih">Salah</th></tr>`;
+        q.pernyataan.forEach((p,i)=>{
+          html += `<tr><td>${p.teks}</td>
+            <td class="pilih"><input type="radio" name="q${q.n}-${i}" value="true" onchange="pilihKategori(${q.n},${i},true,${q.pernyataan.length})"></td>
+            <td class="pilih"><input type="radio" name="q${q.n}-${i}" value="false" onchange="pilihKategori(${q.n},${i},false,${q.pernyataan.length})"></td></tr>`;
+        });
+        html += `</table>`;
+      } else {
+        const inputType = q.tipe==='kompleks' ? 'checkbox' : 'radio';
+        if(q.tipe==='kompleks'){
+          html += `<div class="petunjuk-kompleks">${q.petunjuk||'Pilih semua jawaban yang benar.'}</div>`;
+        }
+        html += `<div class="opsi">`;
+        ['A','B','C','D','E'].forEach(k=>{
+          html += `<label id="lbl-${q.n}-${k}">
+            <input type="${inputType}" name="q${q.n}" value="${k}" onchange="pilihJawaban(${q.n},'${k}','${q.tipe}')">
+            <span><b>${k}.</b> ${q.opsi[k]}</span>
+          </label>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</section>`;
+  });
+  quizView.innerHTML = html;
+}
+
+function pilihJawaban(n, k, tipe){
+  if(tipe==='kompleks'){
+    if(!jawabanUser[n]) jawabanUser[n] = [];
+    const arr = jawabanUser[n];
+    const idx = arr.indexOf(k);
+    const cb = document.querySelector(`#lbl-${n}-${k} input`);
+    if(cb.checked && idx===-1) arr.push(k);
+    if(!cb.checked && idx!==-1) arr.splice(idx,1);
+    document.getElementById(`lbl-${n}-${k}`).classList.toggle('dipilih', cb.checked);
+    if(arr.length===0) delete jawabanUser[n];
+  } else {
+    jawabanUser[n] = k;
+    ['A','B','C','D','E'].forEach(opt=>{
+      const el = document.getElementById(`lbl-${n}-${opt}`);
+      if(el) el.classList.toggle('dipilih', opt===k);
+    });
+  }
+  updateProgress();
+}
+
+function pilihKategori(n, idx, val, total){
+  if(!jawabanUser[n]) jawabanUser[n] = new Array(total).fill(null);
+  jawabanUser[n][idx] = val;
+  updateProgress();
+}
+
+function jumlahTerjawab(){
+  let count = 0;
+  DATA.forEach(q=>{
+    const ua = jawabanUser[q.n];
+    if(q.tipe==='kategori'){
+      if(ua && ua.every(v=>v!==null && v!==undefined)) count++;
+    } else if(q.tipe==='kompleks'){
+      if(ua && ua.length>0) count++;
+    } else {
+      if(ua) count++;
+    }
+  });
+  return count;
+}
+
+function updateProgress(){
+  const terjawab = jumlahTerjawab();
+  const total = DATA.length;
+  document.getElementById('progress-fill').style.width = (terjawab/total*100)+'%';
+  document.getElementById('progress-label').textContent = `${terjawab} / ${total}`;
+  btnSubmit.disabled = terjawab < total;
+  peringatan.style.display = 'none';
+}
+
+btnSubmit.addEventListener('click', ()=>{
+  if(jumlahTerjawab() < DATA.length){
+    peringatan.style.display = 'block';
+    return;
+  }
+  tampilkanHasil();
+});
+
+function samaSet(a, b){
+  if(a.length !== b.length) return false;
+  const sa = [...a].sort();
+  const sb = [...b].sort();
+  return sa.every((v,i)=>v===sb[i]);
+}
+
+function cekBenar(q){
+  const ua = jawabanUser[q.n];
+  if(q.tipe==='kategori'){
+    if(!ua) return false;
+    return q.pernyataan.every((p,i)=>ua[i]===p.benar);
+  } else if(q.tipe==='kompleks'){
+    return ua && samaSet(ua, q.jawaban);
+  } else {
+    return ua === q.jawaban;
+  }
+}
+
+function tampilkanHasil(){
+  let benar = 0;
+  DATA.forEach(q=>{ if(cekBenar(q)) benar++; });
+  const nilai = Math.round((benar/DATA.length)*100);
+
+  document.getElementById('skor-angka').textContent = `${benar} / ${DATA.length}`;
+  document.getElementById('skor-sub').textContent = `Nilai: ${nilai} — ${benar} jawaban benar dari ${DATA.length} soal`;
+
+  let html = '';
+  const sections = [...new Set(DATA.map(d=>d.sec))];
+  sections.forEach(sec=>{
+    const soalDiSeksi = DATA.filter(d=>d.sec===sec);
+    html += `<h3 style="margin:24px 0 10px;font-size:16px;">${sec}</h3>`;
+    soalDiSeksi.forEach(q=>{
+      const isBenar = cekBenar(q);
+      let tipeLabel = q.tipe==='kompleks' ? 'Kompleks' : (q.tipe==='kategori' ? 'Kategori' : 'PG');
+
+      html += `<div class="soal ${isBenar?'benar':'salah'}">
+        <div class="no">Soal ${q.n}<span class="tipe-pill">${tipeLabel}</span><span class="status-pill ${isBenar?'benar':'salah'}">${isBenar?'Benar':'Salah'}</span></div>
+        <div class="teks">${q.teks}</div>`;
+
+      if(q.tipe==='kategori'){
+        const ua = jawabanUser[q.n] || [];
+        html += `<table class="kategori-tabel"><tr><th>Pernyataan</th><th class="pilih">Jawabanmu</th><th class="pilih">Kunci</th></tr>`;
+        q.pernyataan.forEach((p,i)=>{
+          const userVal = ua[i];
+          const userTxt = userVal===true?'Benar':(userVal===false?'Salah':'-');
+          const kunciTxt = p.benar?'Benar':'Salah';
+          const cocok = userVal===p.benar;
+          html += `<tr><td>${p.teks}</td><td class="pilih" style="color:${cocok?'#227a4f':'#b23a2e'};font-weight:600;">${userTxt}</td><td class="pilih" style="color:#227a4f;font-weight:600;">${kunciTxt}</td></tr>`;
+        });
+        html += `</table>`;
+      } else {
+        const jawabanBenarSet = q.tipe==='kompleks' ? q.jawaban : [q.jawaban];
+        const ua = jawabanUser[q.n];
+        const jawabanUserSet = q.tipe==='kompleks' ? (ua||[]) : (ua?[ua]:[]);
+        html += `<div class="opsi">`;
+        ['A','B','C','D','E'].forEach(k=>{
+          let tag = '';
+          const adalahBenar = jawabanBenarSet.includes(k);
+          const dipilihUser = jawabanUserSet.includes(k);
+          if(adalahBenar) tag = ' style="border-color:#227a4f;background:#eaf7f0;"';
+          else if(dipilihUser && !adalahBenar) tag = ' style="border-color:#b23a2e;background:#fceeec;"';
+          html += `<label${tag}><span><b>${k}.</b> ${q.opsi[k]}</span></label>`;
+        });
+        html += `</div>
+          <div class="jawaban-line"><span class="label">Jawabanmu:</span> ${jawabanUserSet.join(', ')||'(tidak dijawab)'} ${isBenar?'':' — <span class="salah-teks">tidak tepat</span>'}</div>
+          <div class="jawaban-line benar-teks">Jawaban benar: ${jawabanBenarSet.join(', ')}</div>`;
+      }
+
+      html += `<div class="pembahasan-teks"><b>Pembahasan:</b> ${q.bahas}</div></div>`;
+    });
+  });
+  document.getElementById('pembahasan-list').innerHTML = html;
+
+  document.getElementById('quiz-view').style.display = 'none';
+  document.getElementById('hasil-view').style.display = 'block';
+  document.getElementById('progress-bar').style.display = 'none';
+  document.getElementById('bar-bawah').innerHTML = `<button class="btn secondary" onclick="location.reload()">Ulangi Kuis</button>`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+renderQuiz();
+</script>
+</body>
+</html>
